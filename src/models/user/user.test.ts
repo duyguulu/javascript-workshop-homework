@@ -1,9 +1,53 @@
 /* eslint-disable no-undef */
 import { User } from './user'
+import faker from "faker" //random sayı mail üretmek için kullanılır.
 
 describe('[user.ts]', () => {
-  it('creates instance of user', () => {
-    const user = new User()
-    expect(user instanceof User).toBe(true)
+  const { lorem: {word}}=faker;
+
+  beforeEach(() => {
+    User.allUsers = [];
   })
+
+  it('creates instance of user', () => {
+    const socketId = word()
+    const name = word()
+    const user = new User(socketId,name);
+
+    expect(user instanceof User).toBe(true)
+    expect(user.name).toBe(name)
+    expect(user.socketId).toBe(socketId)
+  })
+
+  it('create multiple instance of user and returns all user', () =>{
+    const socketId1 = word()
+    const socketId2 = word()
+    const name1 = word()
+    const name2 = word()
+    new User(socketId1,name1)
+    new User(socketId2,name2)
+
+    const users= User.getAllUsers()
+    expect(Object.keys(users)).toHaveLength(2)
+    expect(users[socketId1]).toBeInstanceOf(User)
+    expect(users[socketId1].name).toBe(name1)
+    expect(users[socketId1].socketId).toBe(socketId1)
+
+  })
+
+  it('creates multiple instance of user and returns user by given id', () => {
+    const socketId1 = word()
+    const socketId2 = word()
+    const name1 = word()
+    const name2 = word()
+    new User(socketId1,name1)
+    new User(socketId2,name2)
+
+    const user = User.get(socketId1)
+
+    expect(user.name).toBe(name1)
+    expect(user.socketId).toBe(socketId1)
+
+  })
+
 })
